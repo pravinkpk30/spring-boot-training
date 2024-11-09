@@ -1,10 +1,12 @@
 package com.dc.pharmacy.controller;
 
-import com.dc.pharmacy.dto.User;
+import com.dc.pharmacy.dto.UserInfo;
 import com.dc.pharmacy.exception.ResourceNotFoundException;
 
+import com.dc.pharmacy.service.IUserService;
 import jakarta.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,34 +29,48 @@ import java.util.List;
 @RequestMapping("/api/users")
 @Validated
 public class UserController {
-    private List<User> users = new ArrayList<>();
+    private List<UserInfo> users = new ArrayList<>();
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserInfo> getAllUsers() {
         return users;
     }
 
+    @Autowired
+    private IUserService userService;
+
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public UserInfo createUser(@Valid @RequestBody UserInfo user) {
         users.add(user);
         return user;
     }
 
+    @PostMapping
+    @RequestMapping("/adduser")
+    public void addUser(@Valid @RequestBody UserInfo user) {
+        userService.addUser(user);
+    }
+
+    @RequestMapping("/finduser/{email}")
+    public UserInfo findUser(@RequestParam("email") String email) {
+        return userService.findUser(email);
+    }
+
     @GetMapping("/{id}")
     @ResponseBody
-    public User getUserById(@PathVariable Long id) {
+    public UserInfo getUserById(@PathVariable Long id) {
         return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
     }
 
     @GetMapping("/{id}/{name}")
     @ResponseBody
-    public User getUserByIdAndName(@PathVariable Long id, @PathVariable("name") String username) {
+    public UserInfo getUserByIdAndName(@PathVariable Long id, @PathVariable("name") String username) {
         return users.stream().filter(user -> user.getId().equals(id) && user.getName().equalsIgnoreCase(username)).findFirst().orElse(null);
     }
 
     @PutMapping("/{id}")
     @ResponseBody
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+    public UserInfo updateUser(@PathVariable Long id, @RequestBody UserInfo user) {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId().equals(id)) {
                 users.set(i, user);

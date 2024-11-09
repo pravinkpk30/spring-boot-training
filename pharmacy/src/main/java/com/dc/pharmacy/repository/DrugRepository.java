@@ -1,12 +1,11 @@
-package com.dc.pharmacy.service;
-
-import java.util.List;
+package com.dc.pharmacy.repository;
 
 import com.dc.pharmacy.entity.DrugInfo;
 
-public interface IDrugService {
-    
-    String getDrugInfo();
+import java.util.List;
+import java.util.Optional;
+
+public interface DrugRepository {
 
     void createDrug(DrugInfo drugInfo);
 
@@ -18,11 +17,9 @@ public interface IDrugService {
 
     List<DrugInfo> sortAndPaginatDrug();
 
-    DrugInfo findByDrugId(Long id);
+    Optional<DrugInfo> findByDrugId(Long id);
 
-    List<DrugInfo> findActiveDrug(String ndc);
+    List<DrugInfo> findByActiveDrug(String ndc);
 
     void updateDrugStatus(String ndc, Boolean active);
-
-    void testTransactionalException(String ndc, Boolean active);
 }

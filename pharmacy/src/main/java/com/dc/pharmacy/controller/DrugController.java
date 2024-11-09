@@ -1,16 +1,27 @@
 package com.dc.pharmacy.controller;
 
+import java.util.List;
+
+import com.dc.pharmacy.service.impl.DrugDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dc.pharmacy.dto.ApplicationProperties;
 import com.dc.pharmacy.dto.Drug;
-import com.dc.pharmacy.exception.DrugNotFoundException;
+import com.dc.pharmacy.entity.DrugInfo;
 import com.dc.pharmacy.exception.InvalidInputException;
+import com.dc.pharmacy.service.IDrugService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/drug")
@@ -23,6 +34,12 @@ public class DrugController {
     private String description;
 
     private final ApplicationProperties appProperties;
+
+    @Autowired
+    private IDrugService drugService;
+
+    @Autowired
+    private DrugDetailsServiceImpl drugDetailsService;
 
     public DrugController (ApplicationProperties appProperties) {
         this.appProperties = appProperties;
@@ -47,4 +64,48 @@ public class DrugController {
         return "Valid input: " + input;
     }
     
+    @PostMapping
+    public void addDrug(@Valid @RequestBody DrugInfo drugInfo) {
+        drugService.createDrug(drugInfo);
+    }
+
+    @PutMapping
+    public void updateDrug(@Valid @RequestBody DrugInfo drugInfo) {
+        drugService.updateDrug(drugInfo);
+    }
+
+    @DeleteMapping("/{drugId}")
+    public void deleteDrug(@PathVariable("drugId") Long id) {
+        drugService.deleteDrug(id);
+    }
+
+    @GetMapping
+    public DrugInfo findDrug(@RequestParam("drugId") Long id) {
+        return drugService.findByDrugId(id);
+    }
+
+    @GetMapping("/list-drugs")
+    public List<DrugInfo> listDrug() {
+        return drugService.getDrugList();
+    }
+
+    @GetMapping("/sort-drugs")
+    public List<DrugInfo> sortAndPaginatDrug() {
+        return drugService.sortAndPaginatDrug();
+    }
+
+    @GetMapping("/ndc/{ndc}")
+    public List<DrugInfo> findActiveDrug(@PathVariable("ndc") String ndc) {
+        return drugService.findActiveDrug(ndc);
+    }
+
+    @PutMapping("/status/ndc/{ndc}/{active}")
+    public void updateDrugStatus(@PathVariable("ndc") String ndc, @PathVariable("active") Boolean active) {
+        drugService.updateDrugStatus(ndc, active);
+    }
+
+    @PutMapping("/trans-exception/ndc/{ndc}/{active}")
+    public void testTransactionalException(@PathVariable("ndc") String ndc, @PathVariable("active") Boolean active) {
+        drugDetailsService.invokeTestTransactionalExceptionFromOtherService(ndc, active);
+    }
 }
