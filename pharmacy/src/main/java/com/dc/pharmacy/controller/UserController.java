@@ -7,6 +7,7 @@ import com.dc.pharmacy.service.IUserService;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 @Validated
 public class UserController {
     private List<UserInfo> users = new ArrayList<>();
@@ -56,10 +57,12 @@ public class UserController {
         return userService.findUser(email);
     }
 
+    @PreAuthorize("#id == authentication.name")
     @GetMapping("/{id}")
     @ResponseBody
     public UserInfo getUserById(@PathVariable Long id) {
-        return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
+        // return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
+        return userService.findUserById(id);
     }
 
     @GetMapping("/{id}/{name}")

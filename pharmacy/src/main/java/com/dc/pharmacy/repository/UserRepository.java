@@ -1,10 +1,14 @@
 package com.dc.pharmacy.repository;
 
-import com.dc.pharmacy.entity.User;
+import com.dc.pharmacy.entity.UserEntity;
 
 public interface UserRepository {
 
-    void saveUser(User user);
+    void saveUser(UserEntity user);
 
-    User findUser(String email);
+    UserEntity findUser(String email);
+
+    UserEntity findByUsername(String username);
+
+    UserEntity findUserById(Long userId);
 }

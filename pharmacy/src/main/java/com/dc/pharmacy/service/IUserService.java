@@ -7,4 +7,8 @@ public interface IUserService {
     void addUser(UserInfo userInfo);
 
     UserInfo findUser(String email);
+
+    UserInfo signUp(UserInfo userInfo);
+
+    UserInfo findUserById(Long userId);
 }

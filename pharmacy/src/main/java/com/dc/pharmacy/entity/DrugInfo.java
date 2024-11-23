@@ -1,5 +1,6 @@
 package com.dc.pharmacy.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -44,6 +45,7 @@ public class DrugInfo implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pharmacy_id", nullable = false, referencedColumnName = "pharmacy_id")
+    @JsonBackReference
     private Pharmacy pharmacy;
 
 //    mappedBy: This attribute is used in the Drug entity to indicate that the relationship is managed by the drugs collection in the Prescription entity.entity

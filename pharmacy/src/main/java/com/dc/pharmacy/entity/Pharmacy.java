@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "pharmacy")
 public class Pharmacy {
@@ -18,6 +20,7 @@ public class Pharmacy {
 
     // One-to-many relationship: one pharmacy can have many drugs
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<DrugInfo> drugs;
 
     public Pharmacy() {}

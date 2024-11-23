@@ -1,5 +1,7 @@
 package com.dc.pharmacy.dto;
 
+import com.dc.pharmacy.entity.Address;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +20,48 @@ public class UserInfo {
 
     @NotNull(message = "SSN is required")
     private String ssn;
+
+    @NotNull(message = "Username is required")
+    private String username;
+
+    @NotNull(message = "Password is required")
+    private String password;
+
+    private String roles;
+
+    private Address address;
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getSsn() {
         return ssn;
