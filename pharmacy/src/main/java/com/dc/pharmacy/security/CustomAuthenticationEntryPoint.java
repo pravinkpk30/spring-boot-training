@@ -26,6 +26,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             errorMessage = "Invalid username";
         } else if (authException instanceof BadCredentialsException) {
             errorMessage = "Invalid password";
+        } else if (authException instanceof Exception) {
+            errorMessage = authException.getMessage();
         }
 
         response.getWriter().write("{\"error\": \"" + errorMessage + "\"}");

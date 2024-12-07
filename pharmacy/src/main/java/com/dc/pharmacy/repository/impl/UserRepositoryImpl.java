@@ -1,6 +1,7 @@
 package com.dc.pharmacy.repository.impl;
 
 import com.dc.pharmacy.entity.UserEntity;
+import com.dc.pharmacy.exception.UserNotFoundException;
 import com.dc.pharmacy.repository.IUserRepository;
 import com.dc.pharmacy.repository.UserRepository;
 
@@ -37,8 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             return userRepository.findById(userId).orElseThrow(() -> new Exception("User not found!!"));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new UserNotFoundException(e.getMessage());
         }
-        return null;
     }
 }

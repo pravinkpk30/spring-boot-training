@@ -7,16 +7,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.dc.pharmacy.security.CustomAuthenticationEntryPoint;
 import com.dc.pharmacy.security.CustomAuthenticationProvider;
 import com.dc.pharmacy.security.CustomUserDetailsService;
+import com.dc.pharmacy.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,10 +27,13 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomAuthenticationEntryPoint authenticationEntryPoint,
+    JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @SuppressWarnings("removal")
@@ -36,7 +42,7 @@ public class SecurityConfig {
         http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/public/**").permitAll() 
+        .requestMatchers("/api/public/**", "/actuator/**").permitAll() 
         .requestMatchers("/api/user/**").hasRole("USER")
         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "MANAGER")
         .anyRequest().authenticated())
@@ -45,6 +51,8 @@ public class SecurityConfig {
         .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPoint)
         .and()
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .logout(logout -> logout.logoutUrl("/logout").permitAll());
 
         return http.build();

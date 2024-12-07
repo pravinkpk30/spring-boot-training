@@ -31,6 +31,16 @@ public class UserInfo {
 
     private Address address;
 
+    private Boolean active;
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public String getRoles() {
         return roles;
     }

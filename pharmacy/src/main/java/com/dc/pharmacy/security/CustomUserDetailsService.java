@@ -33,6 +33,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(userEntity.getUsername())
                 .password(userEntity.getPassword()) 
                 .roles(roles) 
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
                 .build();
     }
     

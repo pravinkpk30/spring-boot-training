@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dc.pharmacy.dto.AuthRequest;
 import com.dc.pharmacy.dto.UserInfo;
 import com.dc.pharmacy.service.IUserService;
+import com.dc.pharmacy.utility.JwtUtil;
 
 import jakarta.validation.Valid;
 
@@ -29,6 +30,9 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/signup")
     public UserInfo signup(@Valid @RequestBody UserInfo userInfo) {
         return userService.signUp(userInfo);
@@ -39,8 +43,10 @@ public class AuthController {
     public String login(@Valid @RequestBody AuthRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            // String jwtToken = jwtUtil.generateToken(authentication.getName()); // If you remove this, it could be basic authentication
+            String jwtToken = jwtUtil.generateToken(authentication.getPrincipal());
             System.out.println("Authentication successful: " + authentication);
-            return "Login Successfull";
+            return jwtToken;
         } catch (UsernameNotFoundException e) {
             throw new RuntimeException("Invalid username");
         } catch (BadCredentialsException e) {

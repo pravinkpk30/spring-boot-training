@@ -26,6 +26,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void addUser(UserInfo userInfo) {
         UserEntity user = conversion.convertUserDtoToEntity(userInfo);
+        user.setPassword(encoder.encode(userInfo.getPassword()));
         userRepository.saveUser(user);
     }
 
@@ -52,6 +53,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInfo findUserById(Long userId) {
         UserEntity userEntity = userRepository.findUserById(userId);
+        if(userEntity == null) {
+            throw new UserNotFoundException("User not found !!");
+        }
         return conversion.prepareBasicUserResponse(userEntity);
     }
 }
